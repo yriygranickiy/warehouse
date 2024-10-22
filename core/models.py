@@ -44,8 +44,8 @@ class Suppliers(Base):
     email = Column(String(70), nullable=False)
     address = Column(Text, nullable=False)
 
-    product_suppliers = relationship("Product", back_populates="suppliers")
-    orders = relationship("Order", back_populates="supplier")
+    product = relationship("Product", back_populates="suppliers")
+    order = relationship("Order", back_populates="suppliers")
 
     def __repr__(self):
         return f'<Suppliers {self.supplier_name} {self.contact_person} {self.phone} {self.address} {self.email}>'
@@ -63,11 +63,11 @@ class Product(Base):
     category_id = Column(Integer, ForeignKey('category.id'), nullable=False)
     supplier_id = Column(Integer, ForeignKey('suppliers.id'), nullable=False)
 
-    supplier = relationship('Suppliers', back_populates='product')
+    suppliers = relationship('Suppliers', back_populates='product')
     category = relationship('Category', back_populates='product')
 
     warehouse_transaction = relationship('WarehouseTransaction', back_populates='product')
-    orders = relationship('Order', back_populates='product')
+    order = relationship('Order', back_populates='product')
 
     def __repr__(self):
         return f'<Product {self.product_name} {self.quantity} {self.price} {self.description}>'
@@ -84,7 +84,7 @@ class Warehouse(Base):
         return f'<Warehouse {self.warehouse_name} {self.location}>'
 
 
-class warehouse_transaction(Base):
+class WarehouseTransaction(Base):
     __tablename__ = 'warehouse_transaction'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -112,7 +112,7 @@ class Order(Base):
     product_id = Column(Integer, ForeignKey('product.id'), nullable=False)
     supplier_id = Column(Integer, ForeignKey('suppliers.id'), nullable=False)
 
-    supplier = relationship('Suppliers', back_populates='order')
+    suppliers = relationship('Suppliers', back_populates='order')
     product = relationship('Product', back_populates='order')
 
     def __repr__(self):
