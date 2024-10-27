@@ -1,4 +1,4 @@
-from core.models import Employee
+
 from database import init_db, SessionLocal
 from repository.employee_repository import EmployeeRepository
 from service.employee_service import EmployeeService
