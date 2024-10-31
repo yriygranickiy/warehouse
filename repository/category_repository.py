@@ -21,3 +21,4 @@ class CategoryRepository:
         self.session.delete(category_id)
         self.session.commit()
 
+
