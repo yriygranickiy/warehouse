@@ -20,3 +20,4 @@ class CategoryRepository:
     def delete_category(self, category_id):
         self.session.delete(category_id)
         self.session.commit()
+

@@ -9,3 +9,4 @@ class CategoryService:
     def create(self, category_name,description):
         category = Category(category_name = category_name,description=description)
         self.category_repository.add_category(category)
+
