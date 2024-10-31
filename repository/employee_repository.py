@@ -16,8 +16,9 @@ class EmployeeRepository:
 
     def get_by_id(self, employee_id):
         return self.session.query(Employee).filter_by(id=employee_id).first()
-    def update(self, employee: Employee):
-        self.session.commit()
+
+    # def update(self, employee: Employee):
+    #     self.session.commit()
 
     def delete(self, employee: Employee):
         self.session.delete(employee)
