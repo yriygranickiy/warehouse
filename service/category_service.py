@@ -11,3 +11,5 @@ class CategoryService:
         self.category_repository.add_category(category)
 
 
+    def get_all(self):
+        return self.category_repository.get_all_categories()

@@ -11,3 +11,5 @@ class EmployeeService:
         employee = Employee(first_name=first_name, last_name=last_name, email=email,position=position,phone=phone)
         self.employee_repository.add(employee)
 
+    def get_all_employees(self):
+        return self.employee_repository.get_all()
