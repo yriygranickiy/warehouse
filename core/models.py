@@ -17,7 +17,13 @@ class Employee(Base):
     warehouse_transaction = relationship("WarehouseTransaction", back_populates="employee")
 
     def __repr__(self):
-        return f'<Employee {self.first_name} {self.last_name} {self.email} {self.phone} {self.position}>'
+        return (f'-------------\n'
+                f'employee first name: {self.first_name}\n'
+                f'employee last name: {self.last_name}\n'
+                f'email: {self.email}\n'
+                f'phone: {self.phone}\n'
+                f'position: {self.position}\n'
+                f'--------------')
 
 
 class Category(Base):
@@ -30,7 +36,10 @@ class Category(Base):
     product = relationship('Product', back_populates='category')
 
     def __repr__(self):
-        return f'<Category {self.category_name} {self.description}>'
+        return (f'------------\n'
+                f'category name: {self.category_name}\n'
+                f'description: {self.description}\n'
+                f'------------\n')
 
 
 class Suppliers(Base):
@@ -47,7 +56,14 @@ class Suppliers(Base):
     order = relationship("Order", back_populates="suppliers")
 
     def __repr__(self):
-        return f'<Suppliers {self.supplier_name} {self.contact_person} {self.phone} {self.address} {self.email}>'
+        return (f'---------------\n'
+                f'supplier name: {self.supplier_name}\n'
+                f'supplier contact: {self.contact_person} \n'
+                f'supplier phone: {self.phone} \n'
+                f'supplier address: {self.address} \n'
+                f'supplier email: {self.email}\n'
+                f'---------------')
+
 
 
 class Product(Base):
@@ -69,7 +85,12 @@ class Product(Base):
     order = relationship('Order', back_populates='product')
 
     def __repr__(self):
-        return f'<Product {self.product_name} {self.quantity} {self.price} {self.description}>'
+        return (f'-------------\n'
+                f'product name: {self.product_name}\n'
+                f'quantity: {self.quantity}\n'
+                f'price: {self.price}\n'
+                f'description: {self.description}\n'
+                f'--------------')
 
 
 class Warehouse(Base):
