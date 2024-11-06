@@ -89,6 +89,7 @@ class Product(Base):
                 f'product name: {self.product_name}\n'
                 f'quantity: {self.quantity}\n'
                 f'price: {self.price}\n'
+                f'created_date: {self.created_date}\n'
                 f'description: {self.description}\n'
                 f'--------------')
 
