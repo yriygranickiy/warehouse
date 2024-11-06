@@ -6,8 +6,7 @@ class CategoryService:
     def __init__(self, category_repository: CategoryRepository):
         self.category_repository = category_repository
 
-    def create(self, category_name,description):
-        category = Category(category_name = category_name,description=description)
+    def create(self, category: Category):
         self.category_repository.add_category(category)
 
 
