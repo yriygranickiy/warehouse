@@ -53,7 +53,6 @@ class Suppliers(Base):
     address = Column(Text, nullable=False)
 
     product = relationship("Product", back_populates="suppliers")
-    order = relationship("Order", back_populates="suppliers")
 
     def __repr__(self):
         return (f'---------------\n'
@@ -80,9 +79,8 @@ class Product(Base):
 
     suppliers = relationship('Suppliers', back_populates='product')
     category = relationship('Category', back_populates='product')
-
     warehouse_transaction = relationship('WarehouseTransaction', back_populates='product')
-    order = relationship('Order', back_populates='product')
+    order = relationship('Order',back_populates='product')
 
     def __repr__(self):
         return (f'-------------\n'
@@ -101,8 +99,13 @@ class Warehouse(Base):
     warehouse_name = Column(String(50), nullable=False)
     location = Column(String(50), nullable=False)
 
+    warehouse_transaction = relationship('WarehouseTransaction', back_populates='warehouse')
+
     def __repr__(self):
-        return f'<Warehouse {self.warehouse_name} {self.location}>'
+        return (f'------------\n'
+                f'<Warehouse {self.warehouse_name}\n'
+                f' {self.location}\n'
+                f'--------------')
 
 
 class WarehouseTransaction(Base):
@@ -115,7 +118,9 @@ class WarehouseTransaction(Base):
     comment = Column(Text, nullable=False)
     product_id = Column(Integer, ForeignKey('product.id'), nullable=False)
     employee_id = Column(Integer, ForeignKey('employee.id'), nullable=False)
+    warehouse_id = Column(Integer, ForeignKey('warehouse.id'), nullable=False)
 
+    warehouse = relationship('Warehouse', back_populates='warehouse_transaction')
     product = relationship('Product', back_populates='warehouse_transaction')
     employee = relationship('Employee', back_populates='warehouse_transaction')
 
@@ -131,9 +136,7 @@ class Order(Base):
     order_date = Column(DateTime, nullable=False)
     order_state = Column(String(50), nullable=False)
     product_id = Column(Integer, ForeignKey('product.id'), nullable=False)
-    supplier_id = Column(Integer, ForeignKey('suppliers.id'), nullable=False)
 
-    suppliers = relationship('Suppliers', back_populates='order')
     product = relationship('Product', back_populates='order')
 
     def __repr__(self):
