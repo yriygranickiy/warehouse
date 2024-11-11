@@ -13,3 +13,6 @@ class EmployeeService:
 
     def get_all_employees(self):
         return self.employee_repository.get_all()
+
+    def get_employee_by_id(self, employee_id):
+        return self.employee_repository.get_by_id(employee_id)

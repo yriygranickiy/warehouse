@@ -43,7 +43,13 @@ def main():
     # list_product = ustils.util.generate_product(33)
     # list_warehouse = ustils.util.generate_warehouse(5)
     # list_warehouse_transaction = ustils.util.generate_warehouse_transaction(75)
-    list_order = ustils.util.generate_order(75)
+    # list_order = ustils.util.generate_order(75)
+
+
+    employee_id = input("input employee id: ")
+    employee = emp_service.get_employee_by_id(employee_id)
+
+    print(employee)
 
     # for employee in list_employee:
     #     emp_service.create_employee(employee)
@@ -63,8 +69,8 @@ def main():
     # for warehouse_transaction in list_warehouse_transaction:
     #     warehouse_transaction_service.add(warehouse_transaction)
 
-    for order in list_order:
-        order_service.add_order(order)
+    # for order in list_order:
+    #     order_service.add_order(order)
 
 
     # employees = emp_service.get_all_employees()
