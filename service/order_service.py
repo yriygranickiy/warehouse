@@ -12,3 +12,6 @@ class OrderService:
 
     def get_all_orders(self):
         return self.order_repository.get_all()
+
+    def get_order_by_id(self, order_id):
+        return self.order_repository.get_by_id(order_id)

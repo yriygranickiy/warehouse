@@ -14,7 +14,7 @@ class CategoryRepository:
     def get_all_categories(self):
         return self.session.query(Category).all()
 
-    def get_category_by_id(self, category_id):
+    def get_by_id(self, category_id):
         return self.session.query(Category).filter_by(id=category_id).first()
 
     def delete_category(self, category_id):

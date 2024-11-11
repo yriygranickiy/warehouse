@@ -4,12 +4,15 @@ from repository.product_repository import ProductRepository
 
 class ProductService:
 
-    def __init__(self, repos:ProductRepository):
-        self.repos = repos
+    def __init__(self, repository:ProductRepository):
+        self.repository = repository
 
 
     def create_product(self,product:Product):
-        self.repos.add(product)
+        self.repository.add(product)
 
     def get_all_products(self):
-        return self.repos.get_all()
+        return self.repository.get_all()
+
+    def get_product_by_id(self, product_id):
+        return self.repository.get_by_id(product_id)

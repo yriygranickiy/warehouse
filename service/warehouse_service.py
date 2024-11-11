@@ -11,3 +11,7 @@ class WarehouseService:
 
     def get_all(self):
         return self.repository.get_all()
+
+    def get_warehouse_by_id(self,warehouse_id):
+        return self.repository.get_by_id(warehouse_id)
+

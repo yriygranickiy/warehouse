@@ -11,3 +11,6 @@ class SuppliersService:
 
     def get_all_suppliers(self):
         return self.suppliers_repository.get_all()
+
+    def get_supplier_by_id(self, supplier_id):
+        return self.suppliers_repository.get_suppliers_by_id(supplier_id)

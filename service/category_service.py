@@ -12,3 +12,6 @@ class CategoryService:
 
     def get_all(self):
         return self.category_repository.get_all_categories()
+
+    def get_category_by_id(self,category_id ):
+        return self.category_repository.get_by_id(category_id)

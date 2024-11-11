@@ -16,3 +16,4 @@ class SuppliersRepository:
 
     def get_all(self):
         return self.session.query(Suppliers).all()
+

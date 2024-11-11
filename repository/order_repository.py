@@ -14,3 +14,6 @@ class OrderRepository:
 
     def get_all(self):
         return self.session.query(Order).all()
+
+    def get_by_id(self,id):
+        return self.session.query(Order).filter_by(id=id).first()

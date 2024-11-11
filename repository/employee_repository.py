@@ -23,6 +23,3 @@ class EmployeeRepository:
     def delete(self, employee: Employee):
         self.session.delete(employee)
         self.session.commit()
-
-    def get_by_id(self, employee_id):
-        return self.session.query(Employee).filter_by(id=employee_id).first()

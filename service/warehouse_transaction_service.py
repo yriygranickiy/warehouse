@@ -11,3 +11,6 @@ class WarehouseTransactionService:
 
     def get_all(self):
         return self.repository.get_all()
+
+    def get_transaction_by_id(self,transaction_id):
+        return self.repository.get_by_id(transaction_id)
