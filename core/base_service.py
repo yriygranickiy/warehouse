@@ -2,7 +2,7 @@ from abc import abstractmethod
 from typing import Generic, List, TypeVar, Protocol
 
 from core.models import Category, Employee, Order, Product, Suppliers, Warehouse, WarehouseTransaction
-from repository.base_repository import Repository, WarehouseRepository, WarehouseTransactionRepository, \
+from core.base_repository import Repository, WarehouseRepository, WarehouseTransactionRepository, \
     SuppliersRepository, ProductRepository, OrderRepository, EmployeeRepository, CategoryRepository
 
 T = TypeVar('T')

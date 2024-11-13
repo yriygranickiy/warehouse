@@ -1,6 +1,6 @@
 from datetime import datetime, date
 
-import ustils.util
+import ustils.generator
 from core.models import Employee, Order
 from database import init_db, SessionLocal
 from repository.category_repository import CategoryRepository
