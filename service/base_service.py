@@ -64,3 +64,4 @@ class WarehouseService(BaseService[Warehouse]):
 class WarehouseTransactionRepository(BaseService[WarehouseTransaction]):
     def __init__(self, repository: WarehouseRepository):
         super().__init__(repository)
+

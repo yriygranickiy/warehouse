@@ -65,3 +65,4 @@ class WarehouseRepository(BaseRepository[Warehouse]):
 class WarehouseTransactionRepository(BaseRepository[WarehouseTransaction]):
     def __init__(self, session: Session):
         super().__init__(session,WarehouseTransaction)
+
