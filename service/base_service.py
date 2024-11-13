@@ -2,13 +2,8 @@ from abc import abstractmethod
 from typing import Generic, List, TypeVar, Protocol
 
 from core.models import Category, Employee, Order, Product, Suppliers, Warehouse, WarehouseTransaction
-from repository.base_repository import Repository
-from repository.category_repository import CategoryRepository
-from repository.employee_repository import EmployeeRepository
-from repository.order_repository import OrderRepository
-from repository.product_repository import ProductRepository
-from repository.suppliers_repository import SuppliersRepository
-from repository.wearhouse_repository import WarehouseRepository
+from repository.base_repository import Repository, WarehouseRepository, WarehouseTransactionRepository, \
+    SuppliersRepository, ProductRepository, OrderRepository, EmployeeRepository, CategoryRepository
 
 T = TypeVar('T')
 class Service(Protocol,Generic[T]):
@@ -61,7 +56,7 @@ class WarehouseService(BaseService[Warehouse]):
     def __init__(self, repository: WarehouseRepository):
         super().__init__(repository)
 
-class WarehouseTransactionRepository(BaseService[WarehouseTransaction]):
-    def __init__(self, repository: WarehouseRepository):
+class WarehouseTransactionService(BaseService[WarehouseTransaction]):
+    def __init__(self, repository: WarehouseTransactionRepository):
         super().__init__(repository)
 
