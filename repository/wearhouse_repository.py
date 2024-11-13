@@ -1,18 +1,9 @@
 from sqlalchemy.orm import Session
 
 from core.models import Warehouse
+from repository.base_repository import BaseRepository
 
 
-class WarehouseRepository:
+class WarehouseRepository(BaseRepository[Warehouse]):
     def __init__(self, session:Session):
-        self.session = session
-
-    def add(self,warehouse:Warehouse):
-        self.session.add(warehouse)
-        self.session.commit()
-
-    def get_all(self):
-        self.session.query(Warehouse).all()
-
-    def get_by_id(self,id):
-        return self.session.query(Warehouse).filter_by(id=id).first()
+        super().__init__(session,Warehouse)

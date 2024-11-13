@@ -1,19 +1,10 @@
 from sqlalchemy.orm import Session
 
 from core.models import Order
+from repository.base_repository import BaseRepository
 
 
-class OrderRepository:
+class OrderRepository(BaseRepository[Order]):
 
-    def __init__(self,session: Session):
-        self.session = session
-
-    def add(self,order: Order):
-        self.session.add(order)
-        self.session.commit()
-
-    def get_all(self):
-        return self.session.query(Order).all()
-
-    def get_by_id(self,id):
-        return self.session.query(Order).filter_by(id=id).first()
+    def __init__(self, session: Session):
+        super().__init__(session, Order)

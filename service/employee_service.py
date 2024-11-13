@@ -1,18 +1,8 @@
 from core.models import Employee
 from repository.employee_repository import EmployeeRepository
+from service.base_service import BaseService
 
 
-class EmployeeService:
-
-    def __init__(self, employee_repository: EmployeeRepository):
-        self.employee_repository = employee_repository
-
-    def create_employee(self, employee: Employee):
-        self.employee_repository.add(employee)
-
-
-    def get_all_employees(self):
-        return self.employee_repository.get_all()
-
-    def get_employee_by_id(self, employee_id):
-        return self.employee_repository.get_by_id(employee_id)
+class EmployeeService(BaseService[Employee]):
+    def __init__(self, repository: EmployeeRepository):
+        super().__init__(repository)

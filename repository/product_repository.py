@@ -1,19 +1,10 @@
 from sqlalchemy.orm import Session
 
 from core.models import Product
+from repository.base_repository import BaseRepository
 
 
-class ProductRepository:
+class ProductRepository(BaseRepository[Product]):
 
-    def __init__(self, session:Session):
-        self.session = session
-
-    def add(self, product:Product):
-        self.session.add(product)
-        self.session.commit()
-
-    def get_all(self):
-        return self.session.query(Product).all()
-
-    def get_by_id(self, id):
-        return self.session.query(Product).filter_by(id=id).first()
+    def __init__(self, session: Session):
+        super().__init__(session, Product)

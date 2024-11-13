@@ -62,7 +62,7 @@ def generate_product(num_info):
             price = random.randint(1,50),
             description = fake.text(),
             created_date= fake.date(pattern='%Y-%m-%d'),
-            category_id = random.randint(1,40),
+            category_id = random.randint(1,20),
             supplier_id = random.randint(1,10)
         )
 
