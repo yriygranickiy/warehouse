@@ -103,7 +103,7 @@ class Warehouse(Base):
 
     def __repr__(self):
         return (f'------------\n'
-                f'<Warehouse {self.warehouse_name}\n'
+                f'Warehouse {self.warehouse_name}\n'
                 f' {self.location}\n'
                 f'--------------')
 
@@ -125,7 +125,13 @@ class WarehouseTransaction(Base):
     employee = relationship('Employee', back_populates='warehouse_transaction')
 
     def __repr__(self):
-        return f'<Warehouse_transaction {self.quantity} {self.transaction_type} {self.transaction_date} {self.comment}>'
+        return (f'------------\n'
+                f'Warehouse_transaction\n '
+                f'quantity: {self.quantity}\n'
+                f'type: {self.transaction_type}\n'
+                f'date: {self.transaction_date}\n'
+                f'comment: {self.comment}\n'
+                f'--------------')
 
 
 class Order(Base):
@@ -140,6 +146,11 @@ class Order(Base):
     product = relationship('Product', back_populates='order')
 
     def __repr__(self):
-        return f'<Order {self.quantity} {self.order_date} {self.order_state}>'
+        return (f'-----------\n'
+                f'Order\n'
+                f'quantity: {self.quantity}\n'
+                f'date: {self.order_date}\n'
+                f'state: {self.order_state}\n'
+                f'-----------------')
 
 

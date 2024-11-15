@@ -1,5 +1,6 @@
 from abc import abstractmethod
 from typing import Generic, List, TypeVar, Protocol
+from .logging_config import logger
 
 from core.models import Category, Employee, Order, Product, Suppliers, Warehouse, WarehouseTransaction
 from core.base_repository import Repository, WarehouseRepository, WarehouseTransactionRepository, \
@@ -23,12 +24,15 @@ class BaseService(Service[T], Generic[T]):
         self.repository = repository
 
     def get_by_id(self, id: int) -> T:
+        logger.info(f'get by id: {id}')
         return self.repository.get_by_id(id)
 
     def create(self, data: T) -> T:
+        logger.info(f'create data: {data}')
         self.repository.create(data)
 
     def get_all(self) -> List[T]:
+        logger.info(f'get all')
         return self.repository.get_all()
 
 
