@@ -1,18 +1,19 @@
 #Use base python
-FROM python:3.9-slim
+FROM python:3-alpine
 
 LABEL authors="urijgranickij"
 
 #Install work dir
-WORKDIR /app
+WORKDIR app
 
 #Copy dependencies and install them
-COPY requirements.txt .
+COPY ./requirements.txt ./requirements.txt
+
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY .  .
+COPY ./ ./
 
 #Port
 EXPOSE 5000
 
-CMD ["python","app.py"]
+CMD ["python","main.py"]

@@ -9,3 +9,10 @@ services:
       POSTGRES_DB: my_db
     ports:
       - "5438:5432"
+
+  warehouse:
+    container_name: warehouse_app
+    build:
+      dockerfile: ../Dockerfile
+    depends_on:
+      - warehouse_db
