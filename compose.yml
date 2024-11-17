@@ -1,0 +1,29 @@
+
+services:
+  db_warehouse:
+    container_name: db_warehouse
+    image: postgres:14.4-alpine
+    environment:
+      POSTGRES_USER: my_user
+      POSTGRES_PASSWORD: qwerty
+      POSTGRES_DB: my_db
+    ports:
+      - "5432:5432"
+    networks:
+      - db_network
+
+
+  warehouse:
+    container_name: warehouse_app
+    build:
+      dockerfile: Dockerfile
+    depends_on:
+      - db_warehouse
+    networks:
+      - db_network
+
+networks:
+  db_network:
+    driver: bridge
+
+

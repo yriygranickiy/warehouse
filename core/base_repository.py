@@ -1,6 +1,7 @@
 from abc import abstractmethod
 from typing import Type, Optional, List, TypeVar, Protocol, Generic
 
+
 from sqlalchemy.orm import Session
 
 from core.models import Category, Employee, Order, Product, Suppliers, Warehouse, WarehouseTransaction
@@ -31,6 +32,7 @@ class BaseRepository(Repository[T]):
         return self.db.query(self.model).filter(self.model.id == id).first()
 
     def create(self, obj: T) -> T:
+
         self.db.add(obj)
         self.db.commit()
         self.db.refresh(obj)
@@ -44,6 +46,7 @@ class CategoryRepository(BaseRepository[Category]):
 
 class EmployeeRepository(BaseRepository[Employee]):
     def __init__(self, session: Session):
+
         super().__init__(session,Employee)
 
 class OrderRepository(BaseRepository[Order]):
