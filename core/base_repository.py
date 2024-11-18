@@ -4,6 +4,7 @@ from typing import Type, Optional, List, TypeVar, Protocol, Generic
 
 from sqlalchemy.orm import Session
 
+from core.logging_config import logger
 from core.models import Category, Employee, Order, Product, Suppliers, Warehouse, WarehouseTransaction
 
 T = TypeVar('T')
@@ -29,15 +30,17 @@ class BaseRepository(Repository[T]):
         self.model = model
 
     def get_by_id(self, id: int) -> Optional[T]:
+        logger.debug(f'method get_by_id in repository')
         return self.db.query(self.model).filter(self.model.id == id).first()
 
     def create(self, obj: T) -> T:
-
+        logger.debug(f'method create in repository')
         self.db.add(obj)
         self.db.commit()
         self.db.refresh(obj)
 
     def get_all(self) -> List[T]:
+        logger.debug(f'method get_all in repository')
         return self.db.query(self.model).all()
 
 class CategoryRepository(BaseRepository[Category]):

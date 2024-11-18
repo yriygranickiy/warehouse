@@ -24,15 +24,15 @@ class BaseService(Service[T], Generic[T]):
         self.repository = repository
 
     def get_by_id(self, id: int) -> T:
-        logger.info(f'get by id: {id}')
+        logger.info("method get_by_id called in service")
         return self.repository.get_by_id(id)
 
     def create(self, data: T) -> T:
-        logger.info(f'create data: {data}')
+        logger.info("method create called in service")
         self.repository.create(data)
 
     def get_all(self) -> List[T]:
-        logger.info(f'get all')
+        logger.info("method get_all called in service")
         return self.repository.get_all()
 
 
