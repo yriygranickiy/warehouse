@@ -49,8 +49,7 @@ class CategoryRepository(BaseRepository[Category]):
 
 class EmployeeRepository(BaseRepository[Employee]):
     def __init__(self, session: Session):
-
-        super().__init__(session,Employee)
+        super().__init__(session, Employee)
 
 class OrderRepository(BaseRepository[Order]):
     def __init__(self, session: Session):

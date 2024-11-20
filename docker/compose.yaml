@@ -7,5 +7,5 @@ services:
       POSTGRES_USER: my_user
       POSTGRES_PASSWORD: qwerty
       POSTGRES_DB: my_db
-      ports:
-        - 5438:5432
+    ports:
+      - "5438:5432"
