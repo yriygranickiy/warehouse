@@ -41,6 +41,7 @@ def main():
                 time.sleep(0.3)
                 print(employee)
 
+
         elif choice == "2":
             category_repository = CategoryRepository(session)
             category_service = CategoryService(repository=category_repository)
