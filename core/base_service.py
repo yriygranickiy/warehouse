@@ -19,6 +19,10 @@ class Service(Protocol,Generic[T]):
     def get_all(self)->List[T]:
         ...
 
+    @abstractmethod
+    def delete(self, id: int):
+        ...
+
 class BaseService(Service[T], Generic[T]):
     def __init__(self, repository: Repository[T]):
         self.repository = repository
@@ -34,6 +38,10 @@ class BaseService(Service[T], Generic[T]):
     def get_all(self) -> List[T]:
         logger.info("method get_all called in service")
         return self.repository.get_all()
+
+    def delete(self, id: int):
+        logger.info("method delete called in service")
+        self.repository.delete(id)
 
 
 class CategoryService(BaseService[Category]):

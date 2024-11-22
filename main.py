@@ -26,8 +26,6 @@ def main():
         print("8. Exit")
 
         choice = input("Enter your choice: ")
-        print()
-
         if choice == "1":
             employee_choice()
 
@@ -85,7 +83,7 @@ def employee_choice():
         print("2. Delete")
         print("3. Update")
         print("4. Get all")
-        print("5. gey employee by id")
+        print("5. Get employee by id")
         print("6. Exit")
 
         choice = input("Enter your choice: ")
@@ -104,7 +102,12 @@ def employee_choice():
             time.sleep(0.3)
             print("Employee add successfully!")
         elif choice == "2":
-            pass
+            print("Input employee id for deleting")
+            employee_id = input("Enter employee id: ")
+            print("Deleting employee...")
+            time.sleep(0.3)
+            employee_service.delete(employee_id)
+            print("Employee delete successfully!")
         elif choice == "3":
             pass
         elif choice == "4":

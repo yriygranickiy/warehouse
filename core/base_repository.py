@@ -23,6 +23,10 @@ class Repository(Protocol, Generic[T]):
     def get_all(self) -> List[T]:
         ...
 
+    @abstractmethod
+    def delete(self, id: int):
+        ...
+
 
 class BaseRepository(Repository[T]):
     def __init__(self, db: Session, model: Type[T]):
@@ -42,6 +46,10 @@ class BaseRepository(Repository[T]):
     def get_all(self) -> List[T]:
         logger.debug(f'method get_all in repository')
         return self.db.query(self.model).all()
+
+    def delete(self, id: int):
+        logger.debug(f'method delete in repository')
+        self.db.query(self.model).filter(self.model.id == id).delete()
 
 class CategoryRepository(BaseRepository[Category]):
     def __init__(self, session: Session):
