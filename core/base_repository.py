@@ -1,7 +1,7 @@
 from abc import abstractmethod
 from typing import Type, Optional, List, TypeVar, Protocol, Generic
 
-
+from pyexpat import model
 from sqlalchemy.orm import Session
 
 from core.logging_config import logger
@@ -49,7 +49,9 @@ class BaseRepository(Repository[T]):
 
     def delete(self, id: int):
         logger.debug(f'method delete in repository')
-        self.db.query(self.model).filter(self.model.id == id).delete()
+        model = self.get_by_id(id)
+        self.db.delete(model)
+        self.db.commit()
 
 class CategoryRepository(BaseRepository[Category]):
     def __init__(self, session: Session):

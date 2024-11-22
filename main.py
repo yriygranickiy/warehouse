@@ -176,7 +176,7 @@ def order_view():
             order = Order(quantity=quantity,
                           order_date = datetime.now(),
                           order_state= 'Pending',
-                          product_id = random.randint(1, 100))
+                          product_id = random.randint(2, 3))
             print("Order adding....")
             time.sleep(0.3)
             order_service.create(order)
@@ -203,7 +203,7 @@ def order_view():
             print(order)
             print("Order data get successfully!")
         elif choice == "6":
-            order_loop_menu = True
+            order_loop_menu = False
         else:
             print("Invalid choice")
 
@@ -231,8 +231,8 @@ def product_view():
                               price=price,
                               description=description,
                               created_date=datetime.now(),
-                              category_id=random.randint(1, 10),
-                              supplier_id=random.randint(1, 5))
+                              category_id=random.randint(2, 11),
+                              supplier_id=random.randint(2, 5))
             print("Product adding....")
             time.sleep(0.3)
             product_service.create(product)
@@ -258,7 +258,7 @@ def product_view():
             print(product)
             print("Getting product data...")
         elif choice == "6":
-            product_loop_menu = True
+            product_loop_menu = False
         else:
             print("Invalid choice")
 
@@ -386,9 +386,9 @@ def transaction_view():
                                                transaction_type='purchase',
                                                transaction_date=datetime.now(),
                                                comment=comment,
-                                               product_id=random.randint(1, 100),
-                                               employee_id=random.randint(1, 100),
-                                               warehouse_id=random.randint(1, 25))
+                                               product_id=random.randint(2, 3),
+                                               employee_id=random.randint(1, 2),
+                                               warehouse_id=random.randint(1, 2))
             print("Transaction adding....")
             time.sleep(0.3)
             transaction_service.create(transaction)
