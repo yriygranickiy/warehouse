@@ -10,7 +10,7 @@ def generate_employee(num_info):
 
     list_info= []
 
-    list_position= ['manager','admin','cleaner','loader']
+    list_position= ['manager','admin','cleaner','loader',"staff"]
 
     for _ in range(num_info):
         employee = Employee(
