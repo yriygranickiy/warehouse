@@ -55,16 +55,6 @@ def main():
             for order in order_service.get_all():
                 print(order)
 
-
-
-
-
-
-
-
-
-
-
         elif choice == "4":
             product_repository = ProductRepository(session)
             product_service = ProductService(repository=product_repository)
