@@ -15,7 +15,6 @@ session = SessionLocal()
 # TODO: create method update for all models!!!
 
 def main():
-
     loop_program = True
 
     while loop_program:
@@ -33,15 +32,15 @@ def main():
         if choice == "1":
             employee_view()
         elif choice == "2":
-           category_view()
+            category_view()
         elif choice == "3":
-           order_view()
+            order_view()
         elif choice == "4":
-           product_view()
+            product_view()
         elif choice == "5":
             suppliers_view()
         elif choice == "6":
-           warehouse_view()
+            warehouse_view()
         elif choice == "7":
             transaction_view()
         elif choice == "8":
@@ -107,6 +106,7 @@ def employee_view():
         else:
             print("Invalid choice")
 
+
 def category_view():
     category_repository = CategoryRepository(session)
     category_service = CategoryService(repository=category_repository)
@@ -157,6 +157,7 @@ def category_view():
         else:
             print("Invalid choice")
 
+
 def order_view():
     order_repository = OrderRepository(session)
     order_service = OrderService(repository=order_repository)
@@ -174,9 +175,9 @@ def order_view():
         if choice == "1":
             quantity = int(input("Enter quantity: "))
             order = Order(quantity=quantity,
-                          order_date = datetime.now(),
-                          order_state= 'Pending',
-                          product_id = random.randint(2, 3))
+                          order_date=datetime.now(),
+                          order_state='Pending',
+                          product_id=random.randint(2, 3))
             print("Order adding....")
             time.sleep(0.3)
             order_service.create(order)
@@ -206,6 +207,7 @@ def order_view():
             order_loop_menu = False
         else:
             print("Invalid choice")
+
 
 def product_view():
     product_repository = ProductRepository(session)
@@ -262,6 +264,7 @@ def product_view():
         else:
             print("Invalid choice")
 
+
 def suppliers_view():
     suppliers_repository = SuppliersRepository(session)
     suppliers_service = SupplierService(suppliers_repository)
@@ -317,6 +320,7 @@ def suppliers_view():
         else:
             print("Invalid choice")
 
+
 def warehouse_view():
     warehouse_repository = WarehouseRepository(session)
     warehouse_service = WarehouseService(warehouse_repository)
@@ -365,9 +369,10 @@ def warehouse_view():
         else:
             print("Invalid choice")
 
+
 def transaction_view():
-    transacion_repository = WarehouseTransactionRepository(session)
-    transaction_service = WarehouseTransactionService(transacion_repository)
+    transaction_repository = WarehouseTransactionRepository(session)
+    transaction_service = WarehouseTransactionService(transaction_repository)
     transaction_loop_menu = True
     while transaction_loop_menu:
         print("\nTransactions:\n")
