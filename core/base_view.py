@@ -4,8 +4,9 @@ from datetime import datetime
 from random import random
 from typing import Protocol
 
-from core.base_service import  EmployeeService, CategoryService, OrderService
-from core.models import Employee, Category, Order
+from core.base_service import EmployeeService, CategoryService, OrderService, ProductService, SupplierService, \
+    WarehouseService
+from core.models import Employee, Category, Order, Product, Suppliers, Warehouse, WarehouseTransaction
 
 
 class View(Protocol):
@@ -185,5 +186,223 @@ class OrderView(BaseView):
                 print("Order data get successfully!")
             elif choice == "6":
                 order_loop_menu = False
+            else:
+                print("Invalid choice")
+
+class ProductView(BaseView):
+    def __init__(self, service:ProductService):
+        super().__init__(service)
+
+    def get_view_all(self):
+        product_loop_menu = True
+        while product_loop_menu:
+            print("\nProduct:\n")
+            print("\nProduct:\n")
+            print("1. Add")
+            print("2. Delete")
+            print("3. Update")
+            print("4. Get all")
+            print("5. Get product by id")
+            print("6. Exit")
+            choice = input("Enter your choice: ")
+            if choice == "1":
+                product_name = input("Enter product name: ")
+                quantity = int(input("Enter quantity: "))
+                price = float(input("Enter price: "))
+                description = input("Enter description: ")
+                product = Product(product_name=product_name,
+                                  quantity=quantity,
+                                  price=price,
+                                  description=description,
+                                  created_date=datetime.now(),
+                                  category_id=random.randint(2, 11),
+                                  supplier_id=random.randint(2, 5))
+                print("Product adding....")
+                time.sleep(0.3)
+                self.create(product)
+                print("Product add successfully!")
+            elif choice == "2":
+                product_id = int(input("Enter product id: "))
+                print("Deleting product...")
+                self.delete(product_id)
+                print("Product delete successfully!")
+            elif choice == "3":
+                pass
+            elif choice == "4":
+                print("Load list product...")
+                for product in self.get_all():
+                    print(product)
+                    time.sleep(0.3)
+                print("list load successfully!")
+            elif choice == "5":
+                product_id = int(input("Enter product id: "))
+                print("Getting product data...")
+                time.sleep(0.3)
+                product = self.get_by_id(product_id)
+                print(product)
+                print("Getting product data...")
+            elif choice == "6":
+                product_loop_menu = False
+            else:
+                print("Invalid choice")
+
+class SuppliersView(BaseView):
+    def __init__(self, service:SupplierService):
+        super().__init__(service)
+
+    def get_view_all(self):
+        supplier_loop_menu = True
+        while supplier_loop_menu:
+            print("\nSuppliers:\n")
+            print("1. Add")
+            print("2. Delete")
+            print("3. Update")
+            print("4. Get all")
+            print("5. Get suppliers by id")
+            print("6. Exit")
+            choice = input("Enter your choice: ")
+            if choice == "1":
+                supplier_name = input("Enter supplier name: ")
+                contact_person = input("Enter contact person: ")
+                phone = input("Enter phone number: ")
+                email = input("Enter email address: ")
+                address = input("Enter address: ")
+
+                supplier = Suppliers(supplier_name=supplier_name,
+                                     contact_person=contact_person,
+                                     phone=phone,
+                                     email=email,
+                                     address=address)
+                print("Supplier adding....")
+                time.sleep(0.3)
+                self.create(supplier)
+                print("Supplier add successfully!")
+            elif choice == "2":
+                supplier_id = int(input("Enter supplier id: "))
+                print("Deleting supplier...")
+                time.sleep(0.3)
+                self.delete(supplier_id)
+                print("Supplier delete successfully!")
+            elif choice == "3":
+                pass
+            elif choice == "4":
+                print("Load list supplier...")
+                for supplier in self.get_all():
+                    print(supplier)
+                    time.sleep(0.3)
+                print("list load successfully!")
+            elif choice == "5":
+                supplier_id = int(input("Enter supplier id: "))
+                print("Getting supplier data...")
+                supplier = self.get_by_id(supplier_id)
+                time.sleep(0.3)
+                print(supplier)
+                print("Getting supplier data...")
+            elif choice == "6":
+                supplier_loop_menu = False
+            else:
+                print("Invalid choice")
+
+class WarehouseView(BaseView):
+    def __init__(self, service:WarehouseService):
+        super().__init__(service)
+
+    def get_view_all(self):
+        warehouse_loop_menu = True
+        while warehouse_loop_menu:
+            print("\nWarehouses:\n")
+            print("1. Add")
+            print("2. Delete")
+            print("3. Update")
+            print("4. Get all")
+            print("5. Get warehouse by id")
+            print("6. Exit")
+            choice = input("Enter your choice: ")
+            if choice == "1":
+                warehouse_name = input("Enter warehouse name: ")
+                location = input("Enter location: ")
+
+                warehouse = Warehouse(warehouse_name=warehouse_name,
+                                      location=location)
+                print("Warehouse adding....")
+                time.sleep(0.3)
+                self.create(warehouse)
+                print("Warehouse add successfully!")
+            elif choice == "2":
+                warehouse_id = int(input("Enter warehouse id: "))
+                print("Deleting warehouse...")
+                time.sleep(0.3)
+                self.delete(warehouse_id)
+                print("Warehouse delete successfully!")
+            elif choice == "3":
+                pass
+            elif choice == "4":
+                print("Load list warehouse...")
+                for warehouse in self.get_all():
+                    print(warehouse)
+                    time.sleep(0.3)
+                print("list load successfully!")
+            elif choice == "5":
+                warehouse_id = int(input("Enter warehouse id: "))
+                print("Getting warehouse data...")
+                time.sleep(0.3)
+                print(self.get_by_id(warehouse_id))
+                print("Getting warehouse data...")
+            elif choice == "6":
+                warehouse_loop_menu = False
+            else:
+                print("Invalid choice")
+
+class TransactionView(BaseView):
+    def __init__(self, service):
+        super().__init__(service)
+
+    def get_view_all(self):
+        transaction_loop_menu = True
+        while transaction_loop_menu:
+            print("\nTransactions:\n")
+            print("1. Add")
+            print("2. Delete")
+            print("3. Update")
+            print("4. Get all")
+            print("5. Get transaction by id")
+            print("6. Exit")
+            choice = input("Enter your choice: ")
+            if choice == "1":
+                quantity = int(input("Enter quantity: "))
+                comment = input("Enter comment: ")
+                transaction = WarehouseTransaction(quantity=quantity,
+                                                   transaction_type='purchase',
+                                                   transaction_date=datetime.now(),
+                                                   comment=comment,
+                                                   product_id=random.randint(2, 3),
+                                                   employee_id=random.randint(1, 2),
+                                                   warehouse_id=random.randint(1, 2))
+                print("Transaction adding....")
+                time.sleep(0.3)
+                self.create(transaction)
+                print("Transaction add successfully!")
+            elif choice == "2":
+                transaction_id = int(input("Enter transaction id: "))
+                print("Deleting transaction...")
+                time.sleep(0.3)
+                self.delete(transaction_id)
+                print("Transaction delete successfully!")
+            elif choice == "3":
+                pass
+            elif choice == "4":
+                print("Load list transaction...")
+                for transaction in self.get_all():
+                    print(transaction)
+                    time.sleep(0.3)
+                print("list load successfully!")
+            elif choice == "5":
+                transaction_id = int(input("Enter transaction id: "))
+                print("Getting transaction data...")
+                time.sleep(0.3)
+                print(self.get_by_id(transaction_id))
+                print("Getting transaction data...")
+            elif choice == "6":
+                transaction_loop_menu = False
             else:
                 print("Invalid choice")
