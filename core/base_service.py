@@ -1,7 +1,7 @@
 from abc import abstractmethod
 from typing import Generic, List, TypeVar, Protocol
-from logging_config import logger
 
+from core.logging_config import logger
 from core.models import Category, Employee, Order, Product, Suppliers, Warehouse, WarehouseTransaction
 from core.base_repository import Repository, WarehouseRepository, WarehouseTransactionRepository, \
     SuppliersRepository, ProductRepository, OrderRepository, EmployeeRepository, CategoryRepository
