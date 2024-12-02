@@ -20,6 +20,10 @@ class Service(Protocol, Generic[T]):
         ...
 
     @abstractmethod
+    def update(self, model, model_id: int, obj: T) -> T:
+        ...
+
+    @abstractmethod
     def get_all(self) -> List[T]:
         ...
 
@@ -39,6 +43,20 @@ class BaseService(Service[T], Generic[T]):
     def create(self, data: T) -> T:
         logger.info("method create called in service")
         self.repository.create(data)
+
+    def update(self, model, model_id: int, data: T):
+        logger.info("method update called in service")
+        try:
+            update_model = self.repository.update(model, model_id, data)
+            if update_model:
+                logger.debug(f'Successfully updated model {model}')
+            else:
+                print(f'This {model} is not found')
+        except Exception as e:
+            logger.error(f'Service error during update: {e}')
+            print(f'Error:{str(e)}')
+
+        self.repository.update(model, model_id, data)
 
     def get_all(self) -> List[T]:
         logger.info("method get_all called in service")

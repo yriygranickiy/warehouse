@@ -2,6 +2,8 @@ from abc import abstractmethod
 from typing import Type, Optional, List, TypeVar, Protocol, Generic
 
 from pyexpat import model
+
+from sqlalchemy.exc import NoResultFound, SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from core.logging_config import logger
@@ -17,6 +19,10 @@ class Repository(Protocol, Generic[T]):
 
     @abstractmethod
     def create(self, obj: T) -> T:
+        ...
+
+    @abstractmethod
+    def update(self,obj_id: int, obj: T) -> T:
         ...
 
     @abstractmethod
@@ -42,6 +48,25 @@ class BaseRepository(Repository[T]):
         self.db.add(obj)
         self.db.commit()
         self.db.refresh(obj)
+
+    def update(self, model, obj_id: int, obj: T):
+        logger.debug(f'method update in repository {model}, with id {obj_id}, using data {obj}')
+        try:
+            updated_obj = self.db.query(self.model).filter(self.model.id == obj_id).one()
+            for key in vars(obj):
+                if key.startswith("_"):
+                    continue
+                new_value = getattr(obj, key)
+                if hasattr(updated_obj, key) and new_value is not None:
+                    setattr(updated_obj, key, new_value)
+
+            self.db.commit()
+        except NoResultFound:
+            logger.error(f'Method update in repository {model}, with id {obj_id} not found')
+        except SQLAlchemyError as e:
+            logger.error(f'Method update in repository {model}, with id {obj_id} failed : {e}')
+            self.db.rollback()
+            raise
 
     def get_all(self) -> List[T]:
         logger.debug(f'method get_all in repository')

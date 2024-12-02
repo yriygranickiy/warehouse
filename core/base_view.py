@@ -47,10 +47,10 @@ class EmployeeView(BaseView):
                 email = input("Enter your email: ")
                 phone = input("Enter your phone number: ")
                 employee = Employee(first_name=first_name,
-                                            last_name=last_name,
-                                            position="staff",
-                                            email=email,
-                                            phone=phone)
+                                    last_name=last_name,
+                                    position="staff",
+                                    email=email,
+                                    phone=phone)
                 print("Employee adding....")
                 self.create(employee)
                 time.sleep(0.3)
@@ -63,7 +63,47 @@ class EmployeeView(BaseView):
                 self.delete(employee_id)
                 print("Employee delete successfully!")
             elif choice == "3":
-                pass
+                print("Input employee id for update")
+                employee_id = int(input("Enter employee id: "))
+                employee = self.get_by_id(employee_id)
+                print(f'Employee: {employee}')
+                update_employee = employee
+                update_loop = True
+                while update_loop:
+                    print("Update Employee:\n")
+                    print("1. Update First Name")
+                    print("2. Update Last name")
+                    print("3. Update Email")
+                    print("4. Update Phone Number")
+                    print("5. Update Position")
+                    print("6. Exit")
+                    choice = input("Enter your choice: ")
+                    if choice == "1":
+                        print("Update First Name")
+                        first_name = input("Enter your first name: ")
+                        update_employee.first_name = first_name
+                    elif choice == "2":
+                        print("Update Last name")
+                        last_name = input("Enter your last name: ")
+                        update_employee.last_name = last_name
+                    elif choice == "3":
+                        print("Update Email")
+                        email = input("Enter your email: ")
+                        update_employee.email = email
+                    elif choice == "4":
+                        print("Update Phone Number")
+                        phone = input("Enter your phone number: ")
+                        update_employee.phone = phone
+                    elif choice == "5":
+                        print("Update Position")
+                        position = input("Enter your position: ")
+                        update_employee.position = position
+                    elif choice == "6":
+                        print("Exit")
+                        update_loop = False
+                    else:
+                        print("Invalid choice")
+                    self.update(employee, employee_id, update_employee)
             elif choice == "4":
                 print("load list employee...")
                 time.sleep(0.3)
@@ -135,6 +175,7 @@ class CategoryView(BaseView):
                 category_loop_menu = False
             else:
                 print("Invalid choice")
+
 
 class OrderView(BaseView):
     def __init__(self, service:OrderService):
