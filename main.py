@@ -1,7 +1,3 @@
-import random
-import time
-from datetime import datetime
-from core.models import Employee, Category, Order, Product, Suppliers, Warehouse, WarehouseTransaction
 from core.base_repository import EmployeeRepository, CategoryRepository, OrderRepository, ProductRepository, \
     SuppliersRepository, WarehouseRepository, WarehouseTransactionRepository
 from core.base_service import EmployeeService, CategoryService, OrderService, ProductService, SupplierService, \
@@ -12,9 +8,6 @@ from core.base_view import EmployeeView, CategoryView, OrderView, ProductView, S
 
 init_db()
 session = SessionLocal()
-
-
-# TODO: create method update for all models!!!
 
 def main():
     loop_program = True
@@ -35,31 +28,38 @@ def main():
         if choice == "1":
             repository = EmployeeRepository(session)
             service = EmployeeService(repository)
-            EmployeeView.get_view_all(service)
+            view = EmployeeView(service)
+            view.get_view_all()
         elif choice == "2":
             repository = CategoryRepository(session)
             service = CategoryService(repository)
-            CategoryView.get_view_all(service)
+            category_view = CategoryView(service)
+            category_view.get_view_all()
         elif choice == "3":
             repository = OrderRepository(session)
             service = OrderService(repository)
-            OrderView.get_view_all(service)
+            order_view = OrderView(service)
+            order_view.get_view_all()
         elif choice == "4":
             repository = ProductRepository(session)
             service = ProductService(repository)
-            ProductView.get_view_all(service)
+            view = ProductView(service)
+            view.get_view_all()
         elif choice == "5":
             repository = SuppliersRepository(session)
             service = SupplierService(repository)
-            SuppliersView.get_view_all(service)
+            suppliers_view = SuppliersView(service)
+            suppliers_view.get_view_all()
         elif choice == "6":
             repository = WarehouseRepository(session)
             service = WarehouseService(repository)
-            WarehouseView.get_view_all(service)
+            warehouse_view = WarehouseView(service)
+            warehouse_view.get_view_all()
         elif choice == "7":
             repository = WarehouseTransactionRepository(session)
             service = WarehouseTransactionService(repository)
-            TransactionView.get_view_all(service)
+            transaction_view = TransactionView(service)
+            transaction_view.get_view_all()
         elif choice == "8":
             loop_program = False
         else:

@@ -1,40 +1,40 @@
-from abc import abstractmethod
-from typing import Type, Optional, List, TypeVar, Protocol, Generic
-
-from pyexpat import model
+from abc import abstractmethod, ABC
+from typing import Type, Optional, List, TypeVar, Generic
 
 from sqlalchemy.exc import NoResultFound, SQLAlchemyError
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.testing import db
 
 from core.logging_config import logger
 from core.models import Category, Employee, Order, Product, Suppliers, Warehouse, WarehouseTransaction
 
 T = TypeVar('T')
 
-class Repository(Protocol, Generic[T]):
+
+class Repository(ABC, Generic[T]):
 
     @abstractmethod
     def get_by_id(self, id: int) -> Optional[T]:
-        ...
+        raise NotImplementedError
 
     @abstractmethod
     def create(self, obj: T) -> T:
-        ...
+        raise NotImplementedError
 
     @abstractmethod
-    def update(self,obj_id: int, obj: T) -> T:
-        ...
+    def update(self, obj_id: int, obj: T) -> T:
+        raise NotImplementedError
 
     @abstractmethod
     def get_all(self) -> List[T]:
-        ...
+        raise NotImplementedError
 
     @abstractmethod
     def delete(self, id: int):
-        ...
+        raise NotImplementedError
 
 
-class BaseRepository(Repository[T]):
+class BaseRepository(Repository):
     def __init__(self, db: Session, model: Type[T]):
         self.db = db
         self.model = model
@@ -43,14 +43,13 @@ class BaseRepository(Repository[T]):
         logger.debug(f'method get_by_id in repository')
         return self.db.query(self.model).filter(self.model.id == id).first()
 
-    def create(self, obj: T) -> T:
+    def create(self, obj: T) -> None:
         logger.debug(f'method create in repository')
         self.db.add(obj)
         self.db.commit()
         self.db.refresh(obj)
 
-    def update(self, model, obj_id: int, obj: T):
-        logger.debug(f'method update in repository {model}, with id {obj_id}, using data {obj}')
+    def update(self, obj_id: int, obj: T) -> None:
         try:
             updated_obj = self.db.query(self.model).filter(self.model.id == obj_id).one()
             for key in vars(obj):
@@ -59,12 +58,12 @@ class BaseRepository(Repository[T]):
                 new_value = getattr(obj, key)
                 if hasattr(updated_obj, key) and new_value is not None:
                     setattr(updated_obj, key, new_value)
-
             self.db.commit()
         except NoResultFound:
-            logger.error(f'Method update in repository {model}, with id {obj_id} not found')
+            logger.error(f'Object with id {obj_id} not found')
+            raise
         except SQLAlchemyError as e:
-            logger.error(f'Method update in repository {model}, with id {obj_id} failed : {e}')
+            logger.error(f'Failed to update with id {obj_id} : {e}')
             self.db.rollback()
             raise
 
@@ -72,37 +71,52 @@ class BaseRepository(Repository[T]):
         logger.debug(f'method get_all in repository')
         return self.db.query(self.model).all()
 
-    def delete(self, id: int):
+    def delete(self, id: int) -> None:
         logger.debug(f'method delete in repository')
         model = self.get_by_id(id)
         self.db.delete(model)
         self.db.commit()
 
-class CategoryRepository(BaseRepository[Category]):
-    def __init__(self, session: Session):
-        super().__init__(session,Category)
 
-class EmployeeRepository(BaseRepository[Employee]):
+class CategoryRepository(BaseRepository):
+    def __init__(self, session: Session):
+        super().__init__(session, Category)
+
+
+class EmployeeRepository(BaseRepository):
     def __init__(self, session: Session):
         super().__init__(session, Employee)
 
-class OrderRepository(BaseRepository[Order]):
-    def __init__(self, session: Session):
-        super().__init__(session,Order)
 
-class ProductRepository(BaseRepository[Product]):
+class OrderRepository(BaseRepository):
     def __init__(self, session: Session):
-        super().__init__(session,Product)
+        super().__init__(session, Order)
 
-class SuppliersRepository(BaseRepository[Suppliers]):
+
+class ProductRepository(BaseRepository):
     def __init__(self, session: Session):
-        super().__init__(session,Suppliers)
+        super().__init__(session, Product)
 
-class WarehouseRepository(BaseRepository[Warehouse]):
+    def get_product_with_details(self):
+        product_with_details = (
+            self.db.query(Product)
+            .join(Category, Category.id == Product.category_id)
+            .join(Suppliers, Suppliers.id == Product.supplier_id)
+            .options(joinedload(Product.category), joinedload(Product.suppliers))
+        ).all()
+        return product_with_details
+
+
+class SuppliersRepository(BaseRepository):
     def __init__(self, session: Session):
-        super().__init__(session,Warehouse)
+        super().__init__(session, Suppliers)
 
-class WarehouseTransactionRepository(BaseRepository[WarehouseTransaction]):
+
+class WarehouseRepository(BaseRepository):
     def __init__(self, session: Session):
-        super().__init__(session,WarehouseTransaction)
+        super().__init__(session, Warehouse)
 
+
+class WarehouseTransactionRepository(BaseRepository):
+    def __init__(self, session: Session):
+        super().__init__(session, WarehouseTransaction)
