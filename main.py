@@ -1,3 +1,5 @@
+from optparse import Option
+
 from core.base_repository import EmployeeRepository, CategoryRepository, OrderRepository, ProductRepository, \
     SuppliersRepository, WarehouseRepository, WarehouseTransactionRepository
 from core.base_service import EmployeeService, CategoryService, OrderService, ProductService, SupplierService, \
@@ -8,6 +10,30 @@ from core.base_view import EmployeeView, CategoryView, OrderView, ProductView, S
 
 init_db()
 session = SessionLocal()
+
+
+def handle_choice(choice):
+    options = {
+        "1": ("Employee", EmployeeRepository, EmployeeService, EmployeeView),
+        "2": ("Category", CategoryRepository, CategoryService, CategoryView),
+        "3": ("Order", OrderRepository, OrderView, OrderView),
+        "4": ("Product", ProductRepository, ProductView, ProductView),
+        "5": ("Supplier", SuppliersRepository, SupplierService, SuppliersView),
+        "6": ("Warehouse", WarehouseRepository, WarehouseView, WarehouseView),
+        "7": ("Transaction", WarehouseTransactionRepository, WarehouseService, TransactionView)
+    }
+    if choice in options:
+        entity_name, repository, service, view = options[choice]
+        rep = repository(entity_name)
+        serv = service(rep)
+        view = view(serv)
+        view.get_view_all()
+    elif choice == "8":
+        return False
+    else:
+        print("Invalid choice")
+    return True
+
 
 def main():
     loop_program = True
@@ -25,45 +51,7 @@ def main():
 
         choice = input("Enter your choice: ")
 
-        if choice == "1":
-            repository = EmployeeRepository(session)
-            service = EmployeeService(repository)
-            view = EmployeeView(service)
-            view.get_view_all()
-        elif choice == "2":
-            repository = CategoryRepository(session)
-            service = CategoryService(repository)
-            category_view = CategoryView(service)
-            category_view.get_view_all()
-        elif choice == "3":
-            repository = OrderRepository(session)
-            service = OrderService(repository)
-            order_view = OrderView(service)
-            order_view.get_view_all()
-        elif choice == "4":
-            repository = ProductRepository(session)
-            service = ProductService(repository)
-            view = ProductView(service)
-            view.get_view_all()
-        elif choice == "5":
-            repository = SuppliersRepository(session)
-            service = SupplierService(repository)
-            suppliers_view = SuppliersView(service)
-            suppliers_view.get_view_all()
-        elif choice == "6":
-            repository = WarehouseRepository(session)
-            service = WarehouseService(repository)
-            warehouse_view = WarehouseView(service)
-            warehouse_view.get_view_all()
-        elif choice == "7":
-            repository = WarehouseTransactionRepository(session)
-            service = WarehouseTransactionService(repository)
-            transaction_view = TransactionView(service)
-            transaction_view.get_view_all()
-        elif choice == "8":
-            loop_program = False
-        else:
-            print("Invalid choice")
+        loop_program = handle_choice(choice)
 
 
 if __name__ == '__main__':
