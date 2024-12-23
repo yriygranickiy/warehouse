@@ -3,7 +3,6 @@ from typing import Type, Optional, List, TypeVar, Generic
 
 from sqlalchemy.exc import NoResultFound, SQLAlchemyError
 from sqlalchemy.orm import Session, joinedload
-from sqlalchemy.testing import db
 
 from core.logging_config import logger
 from core.models import Category, Employee, Order, Product, Suppliers, Warehouse, WarehouseTransaction

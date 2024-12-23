@@ -10,16 +10,18 @@ from core.models import Employee, Category, Order, Product, Suppliers, Warehouse
 
 T = TypeVar('T')
 
+
 class BaseView(ABC):
+
     @abstractmethod
     def get_view_all(self):
         ...
-
 class EmployeeView(BaseView):
     def __init__(self, service: EmployeeService):
         self.service = service
 
     def get_view_all(self):
+
         employee_loop_menu = True
 
         while employee_loop_menu:
@@ -37,7 +39,7 @@ class EmployeeView(BaseView):
                 first_name = input("Enter your first name: ")
                 last_name = input("Enter your last name: ")
                 email = input("Enter your email: ")
-                phone = input("Enter your phone number: ")
+                phone = int(input("Enter your phone number: "))
                 employee = Employee(first_name=first_name,
                                     last_name=last_name,
                                     position="staff",
@@ -114,6 +116,7 @@ class EmployeeView(BaseView):
                 employee_loop_menu = False
             else:
                 print("Invalid choice")
+
 
 class CategoryView(BaseView):
     def __init__(self, service: CategoryService):
@@ -192,8 +195,9 @@ class CategoryView(BaseView):
             else:
                 print("Invalid choice")
 
+
 class OrderView(BaseView):
-    def __init__(self, service:OrderService):
+    def __init__(self, service: OrderService):
         self.service = service
 
     def get_view_all(self):
@@ -266,6 +270,7 @@ class OrderView(BaseView):
                 order_loop_menu = False
             else:
                 print("Invalid choice")
+
 
 class ProductView(BaseView):
     def __init__(self, service: ProductService):
@@ -369,8 +374,9 @@ class ProductView(BaseView):
             else:
                 print("Invalid choice")
 
+
 class SuppliersView(BaseView):
-    def __init__(self, service:SupplierService):
+    def __init__(self, service: SupplierService):
         self.service = service
 
     def get_view_all(self):
@@ -440,7 +446,7 @@ class SuppliersView(BaseView):
                         update_loop = False
                     else:
                         print("Invalid choice")
-                    self.service.update(supplier_id,updated_supplier)
+                    self.service.update(supplier_id, updated_supplier)
             elif choice == "4":
                 print("Load list supplier...")
                 for supplier in self.service.get_all():
@@ -459,8 +465,9 @@ class SuppliersView(BaseView):
             else:
                 print("Invalid choice")
 
+
 class WarehouseView(BaseView):
-    def __init__(self, service:WarehouseService):
+    def __init__(self, service: WarehouseService):
         self.service = service
 
     def get_view_all(self):
@@ -529,6 +536,7 @@ class WarehouseView(BaseView):
                 warehouse_loop_menu = False
             else:
                 print("Invalid choice")
+
 
 class TransactionView(BaseView):
     def __init__(self, service):

@@ -14,20 +14,20 @@ session = SessionLocal()
 
 def handle_choice(choice):
     options = {
-        "1": ("Employee", EmployeeRepository, EmployeeService, EmployeeView),
-        "2": ("Category", CategoryRepository, CategoryService, CategoryView),
-        "3": ("Order", OrderRepository, OrderView, OrderView),
-        "4": ("Product", ProductRepository, ProductView, ProductView),
-        "5": ("Supplier", SuppliersRepository, SupplierService, SuppliersView),
-        "6": ("Warehouse", WarehouseRepository, WarehouseView, WarehouseView),
-        "7": ("Transaction", WarehouseTransactionRepository, WarehouseService, TransactionView)
+        '1': ('Employee', EmployeeRepository, EmployeeService, EmployeeView),
+        '2': ('Category', CategoryRepository, CategoryService, CategoryView),
+        '3': ('Order', OrderRepository, OrderView, OrderView),
+        '4': ('Product', ProductRepository, ProductView, ProductView),
+        '5': ('Supplier', SuppliersRepository, SupplierService, SuppliersView),
+        '6': ('Warehouse', WarehouseRepository, WarehouseView, WarehouseView),
+        '7': ('Transaction', WarehouseTransactionRepository, WarehouseService, TransactionView)
     }
     if choice in options:
         entity_name, repository, service, view = options[choice]
-        rep = repository(entity_name)
+        rep = repository(session)
         serv = service(rep)
-        view = view(serv)
-        view.get_view_all()
+        views = view(serv)
+        views.get_view_all()
     elif choice == "8":
         return False
     else:
