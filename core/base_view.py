@@ -1,618 +1,594 @@
 import time
 from abc import abstractmethod, ABC
-from datetime import datetime
+from datetime import datetime, date
 from random import random
 from typing import TypeVar
 
+from sqlalchemy import Transaction
+
 from core.base_service import EmployeeService, CategoryService, OrderService, ProductService, SupplierService, \
-    WarehouseService
+    WarehouseService, WarehouseTransactionService
 from core.models import Employee, Category, Order, Product, Suppliers, Warehouse, WarehouseTransaction
 
 T = TypeVar('T')
 
+class BaseView:
 
-class BaseView(ABC):
+    def __init__(self,service):
+        self.service = service
 
-    @abstractmethod
-    def get_view_all(self):
-        ...
+    def show_menu(self,entity_name, options):
+        print(f"\n{entity_name}\n")
+        for key,option in options.items():
+            print(f"{key}. {option}")
+        return input("Enter your choice: ")
+
+    def handler_create(self,data:T):
+        try:
+            entity = data
+            print("Adding entity...")
+            time.sleep(0.3)
+            self.service.create(entity)
+            print("Entity added successfully!")
+        except Exception as e:
+            print(f"Error: {e}")
+
+    def handler_delete(self):
+        try:
+            entity_id = int(input("Enter id: "))
+            print("Deleting entity...")
+            time.sleep(0.3)
+            self.service.delete(entity_id)
+            print("Entity deleted successfully!")
+        except Exception as e:
+            print(f"Error: {e}")
+
+    def handler_get_all(self):
+        try:
+            print("load data ...")
+            time.sleep(0.3)
+            for entity in self.service.get_all():
+                print(entity)
+                time.sleep(0.3)
+            print("list load successfully!")
+        except Exception as e:
+            print(f"Error: {e}")
+
+    def handler_get_by_id(self):
+        try:
+            entity_id = int(int(input("Enter id: ")))
+            print("Get entity by id...")
+            time.sleep(0.3)
+            entity = self.service.get_by_id(entity_id)
+            print(entity)
+            print("Get entity by id successfully!")
+        except Exception as e:
+            print(f"Error: {e}")
+
+    def handler_update_entity(self,update_function):
+        try:
+
+            entity_id = int(input("Enter id: "))
+
+            entity = self.service.get_by_id(entity_id)
+
+            if not entity:
+                print("No such entity exists!")
+
+                return
+
+            print(f'Entity: {entity}')
+
+            updated_entity = update_function(entity)
+
+            print("Updating entity...")
+
+            time.sleep(0.3)
+
+            self.service.update(entity_id, updated_entity)
+
+        except Exception as e:
+            print(f"Error: {e}")
+
 class EmployeeView(BaseView):
     def __init__(self, service: EmployeeService):
-        self.service = service
+        super().__init__(service)
 
     def get_view_all(self):
+        options = {
+            "1": "Add employee",
+            "2": "Delete employee",
+            "3": "Update employee",
+            "4": "Get all employee",
+            "5": "Get employee by id",
+            "6": "Exit"
+        }
 
-        employee_loop_menu = True
-
-        while employee_loop_menu:
-            print("\nEmployee:\n")
-            print("1. Add")
-            print("2. Delete")
-            print("3. Update")
-            print("4. Get all")
-            print("5. Get employee by id")
-            print("6. Exit")
-
-            choice = input("Enter your choice: ")
-
+        while True:
+            choice = self.show_menu("Employee",options)
             if choice == "1":
-                first_name = input("Enter your first name: ")
-                last_name = input("Enter your last name: ")
-                email = input("Enter your email: ")
-                phone = int(input("Enter your phone number: "))
-                employee = Employee(first_name=first_name,
-                                    last_name=last_name,
-                                    position="staff",
-                                    email=email,
-                                    phone=phone)
-                print("Employee adding....")
-                self.service.create(employee)
-                time.sleep(0.3)
-                print("Employee add successfully!")
+              self.handler_create(self._create_employee())
             elif choice == "2":
-                print("Input employee id for deleting")
-                employee_id = int(input("Enter employee id: "))
-                print("Deleting employee...")
-                time.sleep(0.3)
-                self.service.delete(employee_id)
-                print("Employee delete successfully!")
+               self.handler_delete()
             elif choice == "3":
-                print("Input employee id for update")
-                employee_id = int(input("Enter employee id: "))
-                employee = self.service.get_by_id(employee_id)
-                print(f'Employee: {employee}')
-                update_employee = employee
-                update_loop = True
-                while update_loop:
-                    print("Update Employee:\n")
-                    print("1. Update First Name")
-                    print("2. Update Last name")
-                    print("3. Update Email")
-                    print("4. Update Phone Number")
-                    print("5. Update Position")
-                    print("6. Exit")
-                    choice = input("Enter your choice: ")
-                    if choice == "1":
-                        print("Update First Name")
-                        first_name = input("Enter your first name: ")
-                        update_employee.first_name = first_name
-                    elif choice == "2":
-                        print("Update Last name")
-                        last_name = input("Enter your last name: ")
-                        update_employee.last_name = last_name
-                    elif choice == "3":
-                        print("Update Email")
-                        email = input("Enter your email: ")
-                        update_employee.email = email
-                    elif choice == "4":
-                        print("Update Phone Number")
-                        phone = input("Enter your phone number: ")
-                        update_employee.phone = phone
-                    elif choice == "5":
-                        print("Update Position")
-                        position = input("Enter your position: ")
-                        update_employee.position = position
-                    elif choice == "6":
-                        print("Exit")
-                        update_loop = False
-                    else:
-                        print("Invalid choice")
-                    self.service.update(employee_id, update_employee)
+              self.handler_update_entity(self._update_employee)
             elif choice == "4":
-                print("load list employee...")
-                time.sleep(0.3)
-                for employee in self.service.get_all():
-                    print(employee)
-                    time.sleep(0.3)
-                print("list load successfully!")
+                self.handler_get_all()
             elif choice == "5":
-                id_employee = input("Enter employee id: ")
-                employee = self.service.get_by_id(id_employee)
-                print("getting employee data...")
-                time.sleep(0.3)
-                print(employee)
-                print("employee data get successfully!")
+               self.handler_get_by_id()
             elif choice == "6":
-                employee_loop_menu = False
+                break
             else:
                 print("Invalid choice")
 
+    def _create_employee(self):
+        first_name = input("Enter your first name: ")
+        last_name = input("Enter your last name: ")
+        email = input("Enter your email: ")
+        phone = int(input("Enter your phone number: "))
+        return Employee(first_name= first_name,
+                        last_name= last_name,
+                        position = "staff",
+                        email= email,
+                        phone= phone)
+
+    def _update_employee(self, employee: Employee):
+        options = {
+            "1": "Update first name",
+            "2": "Update last name",
+            "3": "Update Email",
+            "4": "Update Phone Number",
+            "5": "Update Position",
+            "6": "Exit"
+        }
+        while True:
+
+            choice = self.show_menu("Update employee menu",options)
+            if choice == "1":
+                employee.first_name = input("Enter your first name: ")
+            elif choice == "2":
+                employee.last_name = input("Enter your last name: ")
+            elif choice == "3":
+                employee.email = input("Enter your email: ")
+            elif choice == "4":
+                employee.phone = input("Enter your phone number: ")
+            elif choice == "5":
+                employee.position = input("Enter your position: ")
+            elif choice == "6":
+                break
+            else:
+                print("Invalid choice")
+
+        return employee
 
 class CategoryView(BaseView):
+
     def __init__(self, service: CategoryService):
-        self.service = service
+        super().__init__(service)
 
     def get_view_all(self):
-
-        category_loop_menu = True
-
-        while category_loop_menu:
-            print("\nCategory:\n")
-            print("1. Add")
-            print("2. Delete")
-            print("3. Update")
-            print("4. Get all")
-            print("5. Get category by id")
-            print("6. Exit")
-            choice = input("Enter your choice: ")
+        options = {
+            "1": "Add category",
+            "2": "Delete category",
+            "3": "Update category",
+            "4": "Get all category",
+            "5": "Get category by id",
+            "6": "Exit"
+        }
+        while True:
+            choice = self.show_menu("Category",options)
             if choice == "1":
-                category_name = input("Enter name: ")
-                category_desc = input("Enter description: ")
-                created_category = Category(category_name=category_name,
-                                            description=category_desc)
-                print("Category adding....")
-                time.sleep(0.3)
-                self.service.create(created_category)
-                print("Category add successfully!")
+                self.handler_create(self._create_category())
             elif choice == "2":
-                category_id = int(input("Enter category id: "))
-                print("Deleting category...")
-                time.sleep(0.3)
-                self.service.delete(category_id)
-                print("Category delete successfully!")
+                self.handler_delete()
             elif choice == "3":
-                print("Input category id for update...")
-                category_id = int(input("Enter category id: "))
-                category = self.service.get_by_id(category_id)
-                print(f'Category: {category}')
-                updated_category = category
-                update_loop = True
-                while update_loop:
-                    print("Update Category:\n")
-                    print("1. Update name category")
-                    print("2. Update description category")
-                    print("3. Exit")
-                    choice = input("Enter your choice: ")
-                    if choice == "1":
-                        print("Update category name")
-                        category_name = input("Enter name: ")
-                        updated_category.name = category_name
-                    elif choice == "2":
-                        print("Update category description")
-                        description = input("Enter description: ")
-                        updated_category.description = description
-                    elif choice == "3":
-                        update_loop = False
-                    else:
-                        print("Invalid choice")
-                    self.service.update(category_id, updated_category)
+                self.handler_update_entity(self._update_category)
             elif choice == "4":
-                print("Load list category...")
-                time.sleep(0.3)
-                for category in self.service.get_all():
-                    print(category)
-                    time.sleep(0.3)
-                print("list load successfully!")
+                self.handler_get_all()
             elif choice == "5":
-                category_id = int(input("Enter category id: "))
-                category = self.service.get_by_id(category_id)
-                print("Getting category data...")
-                time.sleep(0.3)
-                print(category)
-                print("category data get successfully!")
+                self.handler_delete()
             elif choice == "6":
-                category_loop_menu = False
+                break
             else:
                 print("Invalid choice")
 
+    def _create_category(self):
+        category_name = input("Enter category title: ")
+        description = input("Enter description: ")
+        return Category(category_name = category_name,
+                        description = description)
+
+    def _update_category(self, category: Category):
+        options = {
+            "1": "Update category title",
+            "2": "Update description",
+            "3": "Exit"
+        }
+        while True:
+
+            choice = self.show_menu("Update category menu",options)
+
+            if choice == "1":
+                category.category_name = input("Enter category title: ")
+            elif choice == "2":
+                category.description = input("Enter description: ")
+            elif choice == "3":
+                break
+            else:
+                print("Invalid choice")
+        return category
 
 class OrderView(BaseView):
+
     def __init__(self, service: OrderService):
-        self.service = service
+        super().__init__(service)
 
     def get_view_all(self):
 
-        order_loop_menu = True
+        options = {
+            "1": "Add order",
+            "2": "Delete order",
+            "3": "Update order",
+            "4": "Get all order",
+            "5": "Get order by id",
+            "6": "Exit"
+        }
 
-        while order_loop_menu:
-            print("\nOrder:\n")
-            print("1. Add")
-            print("2. Delete")
-            print("3. Update")
-            print("4. Get all")
-            print("5. Get order by id")
-            print("6. Exit")
-            choice = input("Enter your choice: ")
+        while True:
+            choice = self.show_menu("Order",options)
+
             if choice == "1":
-                quantity = int(input("Enter quantity: "))
-                order = Order(quantity=quantity,
-                              order_date=datetime.now(),
-                              order_state='Pending',
-                              product_id=random.randint(2, 3))
-                print("Order adding....")
-                time.sleep(0.3)
-                self.service.create(order)
-                print("Order add successfully!")
+                self.handler_create(self._create_order())
             elif choice == "2":
-                order_id = int(input("Enter order id: "))
-                print("Deleting order...")
-                self.service.delete(order_id)
-                time.sleep(0.3)
-                print("Order delete successfully!")
+                self.handler_delete()
             elif choice == "3":
-                print("Input order id for update...")
-                order_id = int(input("Enter order id: "))
-                order = self.service.get_by_id(order_id)
-                print(f'Order: {order}')
-                updated_order = order
-                update_loop = True
-                while update_loop:
-                    print("Update Order:")
-                    print("1. Update quantity")
-                    print("2. Update order state")
-                    print("3. Exit")
-                    choice = input("Enter your choice: ")
-                    if choice == "1":
-                        quantity = int(input("Enter quantity: "))
-                        updated_order.quantity = quantity
-                    elif choice == "2":
-                        order_state = input("Enter order state: ")
-                        updated_order.order_state = order_state
-                    elif choice == "3":
-                        update_loop = False
-                    else:
-                        print("Invalid choice")
-                    self.service.update(order_id, updated_order)
+                self.handler_update_entity(self._update_order)
             elif choice == "4":
-                print("Load list order...")
-                for order in self.service.get_all():
-                    print(order)
-                    time.sleep(0.3)
-                print("list load successfully!")
+                self.handler_get_all()
             elif choice == "5":
-                order_id = int(input("Enter order id: "))
-                order = self.service.get_by_id(order_id)
-                print("Getting order data...")
-                time.sleep(0.3)
-                print(order)
-                print("Order data get successfully!")
+                self.handler_get_by_id()
             elif choice == "6":
-                order_loop_menu = False
+                break
             else:
                 print("Invalid choice")
 
+    def _create_order(self):
+        quantity = int(input("Enter quantity: "))
+        order_state = "processing"
+        product_id = input("Enter product id: ")
+        if not product_id:
+            print("Invalid product id")
+            return
+
+        return Order(quantity=quantity,
+                     order_state = order_state,
+                     product_id = product_id)
+
+    def _update_order(self, order: Order):
+
+        options = {
+            "1": "Update quantity",
+            "2": "Update sate",
+            "3": "Update product number",
+            "4": "Exit"
+        }
+
+        while True:
+            choice = self.show_menu("Update order menu",options)
+
+            if choice == "1":
+                order.quantity = input("Enter quantity: ")
+            elif choice == "2":
+                order.order_state = input("Enter state: ")
+            elif choice == "3":
+                order.product_id = input("Enter product number: ")
+            elif choice == "4":
+                break
+            else:
+                print("Invalid choice")
+
+        return order
 
 class ProductView(BaseView):
+
     def __init__(self, service: ProductService):
-        self.service = service
+        super().__init__(service)
 
     def get_view_all(self):
-        product_loop_menu = True
-        while product_loop_menu:
-            print("\nProduct:\n")
-            print("1. Add")
-            print("2. Delete")
-            print("3. Update")
-            print("4. Get all")
-            print("5. Get product with details")
-            print("6. Get product by id")
-            print("7. Exit")
-            choice = input("Enter your choice: ")
+        options = {
+            "1": "Add product",
+            "2": "Delete product",
+            "3": "Update product",
+            "4": "Get all product",
+            "5": "Get product with details",
+            "6": "Get product by id",
+            "7": "Exit"
+        }
+
+        while True:
+            choice = self.show_menu("Product",options)
             if choice == "1":
-                product_name = input("Enter product name: ")
-                quantity = int(input("Enter quantity: "))
-                price = float(input("Enter price: "))
-                description = input("Enter description: ")
-                product = Product(product_name=product_name,
-                                  quantity=quantity,
-                                  price=price,
-                                  description=description,
-                                  created_date=datetime.now(),
-                                  category_id=1,
-                                  supplier_id=1)
-                print("Product adding....")
-                time.sleep(0.3)
-                self.service.create(product)
-                print("Product add successfully!")
+                self.handler_create(self._create_product())
             elif choice == "2":
-                product_id = int(input("Enter product id: "))
-                print("Deleting product...")
-                self.service.delete(product_id)
-                print("Product delete successfully!")
+                self.handler_delete()
             elif choice == "3":
-                print("Input product id for update...")
-                product_id = int(input("Enter product id: "))
-                product = self.service.get_by_id(product_id)
-                print(f'Product: {product}')
-                updated_product = product
-                update_loop = True
-                while update_loop:
-                    print("Update Product:")
-                    print("1. Update name product")
-                    print("2. Update quantity product")
-                    print("3. Update price product")
-                    print("4. Update description product")
-                    print("5. Exit")
-                    choice = input("Enter your choice: ")
-                    if choice == "1":
-                        product_name = input("Enter product name: ")
-                        updated_product.product_name = product_name
-                    elif choice == "2":
-                        quantity = int(input("Enter quantity: "))
-                        updated_product.quantity = quantity
-                    elif choice == "3":
-                        price = float(input("Enter price: "))
-                        updated_product.price = price
-                    elif choice == "4":
-                        description = input("Enter description: ")
-                        updated_product.description = description
-                    elif choice == "5":
-                        update_loop = False
-                    else:
-                        print("Invalid choice")
-                    self.service.update(product_id, updated_product)
+                self.handler_update_entity(self._update_product)
             elif choice == "4":
-                print("Load list product...")
-                for product in self.service.get_all():
-                    print(product)
-                    time.sleep(0.3)
-                print("list load successfully!")
+               self.handler_get_all()
             elif choice == "5":
-                print("Load list product with details...")
-                for product in self.service.get_product_with_details():
-                    print('f----------------------------------------\n'
-                          f'Product name: {product.product_name}\n'
-                          f'Product quantity: {product.quantity}\n'
-                          f'Product price: {product.price}\n'
-                          f'Product date created: {product.created_date}\n'
-                          f'Product category:{product.category.category_name}\n'
-                          f'Suppliers name: {product.suppliers.supplier_name}\n'
-                          f'Suppliers location: {product.suppliers.address}\n'
-                          f'Suppliers phone: {product.suppliers.phone}\n'
-                          f'Suppliers email: {product.suppliers.email}\n')
-                    time.sleep(0.3)
-                print("List load successfully!")
+                self._get_product_with_details()
             elif choice == "6":
-                product_id = int(input("Enter product id: "))
-                print("Getting product data...")
-                time.sleep(0.3)
-                product = self.service.get_by_id(product_id)
-                print(product)
-                print("Getting product data...")
+              self.handler_get_by_id()
             elif choice == "7":
-                product_loop_menu = False
+                break
             else:
                 print("Invalid choice")
 
+    def _create_product(self):
+        product_name = input("Enter product name: ")
+        quantity = int(input("Enter quantity: "))
+        price = float(input("Enter price: "))
+        description = input("Enter description: ")
+        category = input("Enter category: ")
+        supplier = input("Enter supplier: ")
+
+        return Product(product_name = product_name,
+                       quantity = quantity,
+                       price=price,
+                       description=description,
+                       category_id=category,
+                       supplier_id = supplier)
+
+    def _update_product(self, product: Product):
+        options = {
+            "1": "Update title product",
+            "2": "Update quantity product",
+            "3": "Update price product",
+            "4": "Update description product",
+            "5": "Update category product",
+            "6": "Update supplier product",
+            "7": "Exit"
+        }
+
+        while True:
+            choice = self.show_menu("Update product menu",options)
+            if choice == "1":
+                product.product_name = input("Enter product title: ")
+            elif choice == "2":
+                product.quantity = input("Enter product quantity: ")
+            elif choice == "3":
+                product.price = input("Enter product price: ")
+            elif choice == "4":
+                product.description = input("Enter product description: ")
+            elif choice == "5":
+                product.category_id = input("Enter product category number: ")
+            elif choice == "6":
+                product.supplier_id = input("Enter product supplier number: ")
+            elif choice == "7":
+                break
+            else:
+                print("Invalid choice")
+        return product
+
+    def _get_product_with_details(self):
+        print("Load list product with details...")
+        for product in self.service.get_product_with_details():
+            print('f----------------------------------------\n'
+                  f'Product name: {product.product_name}\n'
+                  f'Product quantity: {product.quantity}\n'
+                  f'Product price: {product.price}\n'
+                  f'Product date created: {product.created_date}\n'
+                  f'Product category:{product.category.category_name}\n'
+                  f'Suppliers name: {product.suppliers.supplier_name}\n'
+                  f'Suppliers location: {product.suppliers.address}\n'
+                  f'Suppliers phone: {product.suppliers.phone}\n'
+                  f'Suppliers email: {product.suppliers.email}\n')
+            time.sleep(0.3)
+        print("List load successfully!")
 
 class SuppliersView(BaseView):
     def __init__(self, service: SupplierService):
-        self.service = service
+        super().__init__(service)
 
     def get_view_all(self):
-        supplier_loop_menu = True
-        while supplier_loop_menu:
-            print("\nSuppliers:\n")
-            print("1. Add")
-            print("2. Delete")
-            print("3. Update")
-            print("4. Get all")
-            print("5. Get suppliers by id")
-            print("6. Exit")
-            choice = input("Enter your choice: ")
-            if choice == "1":
-                supplier_name = input("Enter supplier name: ")
-                contact_person = input("Enter contact person: ")
-                phone = input("Enter phone number: ")
-                email = input("Enter email address: ")
-                address = input("Enter address: ")
+        options = {
+            "1": "Add supplier",
+            "2": "Delete supplier",
+            "3": "Update supplier",
+            "4": "Get all supplier",
+            "5": "Get by id supplier",
+            "6": "Exit"
+        }
+        while True:
+            choice = self.show_menu("Suppliers",options)
 
-                supplier = Suppliers(supplier_name=supplier_name,
-                                     contact_person=contact_person,
-                                     phone=phone,
-                                     email=email,
-                                     address=address)
-                print("Supplier adding....")
-                time.sleep(0.3)
-                self.service.create(supplier)
-                print("Supplier add successfully!")
+            if choice == "1":
+                self.handler_create(self._create_supplier())
             elif choice == "2":
-                supplier_id = int(input("Enter supplier id: "))
-                print("Deleting supplier...")
-                time.sleep(0.3)
-                self.service.delete(supplier_id)
-                print("Supplier delete successfully!")
+                self.handler_delete()
             elif choice == "3":
-                print("Input supplier id for update...")
-                supplier_id = int(input("Enter supplier id: "))
-                supplier = self.service.get_by_id(supplier_id)
-                updated_supplier = supplier
-                update_loop = True
-                while update_loop:
-                    print("Update Supplier:")
-                    print("1. Update name supplier")
-                    print("2. Update contact supplier")
-                    print("3. Update phone")
-                    print("4. Update email")
-                    print("5. Update address")
-                    print("6. Exit")
-                    choice = input("Enter your choice: ")
-                    if choice == "1":
-                        supplier_name = input("Enter supplier name: ")
-                        updated_supplier.supplier_name = supplier_name
-                    elif choice == "2":
-                        contact_person = input("Enter contact person: ")
-                        updated_supplier.contact_person = contact_person
-                    elif choice == "3":
-                        phone = input("Enter phone number: ")
-                        updated_supplier.phone = phone
-                    elif choice == "4":
-                        email = input("Enter email address: ")
-                        updated_supplier.email = email
-                    elif choice == "5":
-                        address = input("Enter address: ")
-                        updated_supplier.address = address
-                    elif choice == "6":
-                        update_loop = False
-                    else:
-                        print("Invalid choice")
-                    self.service.update(supplier_id, updated_supplier)
+                self.handler_update_entity(self._update_supplier)
             elif choice == "4":
-                print("Load list supplier...")
-                for supplier in self.service.get_all():
-                    print(supplier)
-                    time.sleep(0.3)
-                print("list load successfully!")
+                self.handler_get_all()
             elif choice == "5":
-                supplier_id = int(input("Enter supplier id: "))
-                print("Getting supplier data...")
-                supplier = self.service.get_by_id(supplier_id)
-                time.sleep(0.3)
-                print(supplier)
-                print("Getting supplier data...")
+                self.handler_get_by_id()
             elif choice == "6":
-                supplier_loop_menu = False
+                break
             else:
                 print("Invalid choice")
 
+    def _create_supplier(self):
+        supplier_name = input("Enter supplier name: ")
+        contact_person = input("Enter contact persot: ")
+        phone_number = input("Enter phone number: ")
+        email = input("Enter email: ")
+        address = input("Enter address: ")
+
+        return Suppliers(supplier_name = supplier_name,
+                         contact_person = contact_person,
+                         phone=phone_number,
+                         email=email,
+                         address=address)
+
+    def _update_supplier(self, supplier):
+        options = {
+            "1": "Update supplier name",
+            "2": "Update supplier contact person",
+            "3": "Update supplier phone number",
+            "4": "Update supplier email",
+            "5": "Update supplier address",
+            "6": "Exit"
+        }
+        while True:
+            choice = self.show_menu("Update supplier menu",options)
+            if choice == "1":
+                supplier.supplier_name = input("Enter supplier name: ")
+            elif choice == "2":
+                supplier.contact_person = input("Enter contact person: ")
+            elif choice == "3":
+                supplier.phone_number = input("Enter phone number: ")
+            elif choice == "4":
+                supplier.email = input("Enter email: ")
+            elif choice == "5":
+                supplier.address = input("Enter address: ")
+            elif choice == "6":
+                break
+            else:
+                print("Invalid choice")
+        return supplier
 
 class WarehouseView(BaseView):
     def __init__(self, service: WarehouseService):
-        self.service = service
+        super().__init__(service)
 
     def get_view_all(self):
-        warehouse_loop_menu = True
-        while warehouse_loop_menu:
-            print("\nWarehouses:\n")
-            print("1. Add")
-            print("2. Delete")
-            print("3. Update")
-            print("4. Get all")
-            print("5. Get warehouse by id")
-            print("6. Exit")
-            choice = input("Enter your choice: ")
-            if choice == "1":
-                warehouse_name = input("Enter warehouse name: ")
-                location = input("Enter location: ")
 
-                warehouse = Warehouse(warehouse_name=warehouse_name,
-                                      location=location)
-                print("Warehouse adding....")
-                time.sleep(0.3)
-                self.service.create(warehouse)
-                print("Warehouse add successfully!")
+        options = {
+            "1": "Add warehouse",
+            "2": "Delete warehouse",
+            "3": "Update warehouse",
+            "4": "Get all warehouse",
+            "5": "Get by id warehouse",
+            "6": "Exit"
+        }
+
+        while True:
+            choice = self.show_menu("Warehouse",options)
+            if choice == "1":
+                self.handler_create(self._create_warehouse())
             elif choice == "2":
-                warehouse_id = int(input("Enter warehouse id: "))
-                print("Deleting warehouse...")
-                time.sleep(0.3)
-                self.service.delete(warehouse_id)
-                print("Warehouse delete successfully!")
+                self.handler_delete()
             elif choice == "3":
-                print("Input warehouse id for update...")
-                warehouse_id = int(input("Enter warehouse id: "))
-                warehouse = self.service.get_by_id(warehouse_id)
-                updated_warehouse = warehouse
-                update_loop = True
-                while update_loop:
-                    print("Update warehouse...")
-                    print("1. Update name warehouse")
-                    print("2. Update location warehouse")
-                    print("3. Exit")
-                    choice = input("Enter your choice: ")
-                    if choice == "1":
-                        warehouse_name = input("Enter warehouse name: ")
-                        updated_warehouse.warehouse_name = warehouse_name
-                    elif choice == "2":
-                        location = input("Enter location: ")
-                        updated_warehouse.location = location
-                    elif choice == "3":
-                        update_loop = False
-                    else:
-                        print("Invalid choice")
-                    self.service.update(warehouse_id, updated_warehouse)
+                self.handler_update_entity(self._update_warehouse)
             elif choice == "4":
-                print("Load list warehouse...")
-                for warehouse in self.service.get_all():
-                    print(warehouse)
-                    time.sleep(0.3)
-                print("list load successfully!")
+                self.handler_get_all()
             elif choice == "5":
-                warehouse_id = int(input("Enter warehouse id: "))
-                print("Getting warehouse data...")
-                time.sleep(0.3)
-                print(self.service.get_by_id(warehouse_id))
-                print("Getting warehouse data...")
+                self.handler_get_by_id()
             elif choice == "6":
-                warehouse_loop_menu = False
+                break
             else:
                 print("Invalid choice")
 
+    def _create_warehouse(self):
+        warehouse_title = input("Enter warehouse title: ")
+        warehouse_address = input("Enter warehouse address: ")
+
+        return Warehouse(warehouse_name=warehouse_title,
+                         location=warehouse_address)
+
+    def _update_warehouse(self, warehouse):
+        options = {
+            "1": "Update warehouse title",
+            "2": "Update warehouse address",
+            "3": "Exit"
+        }
+        while True:
+            choice = self.show_menu("Update warehouse menu",options)
+            if choice == "1":
+                warehouse.warehouse_name = input("Enter warehouse title: ")
+            elif choice == "2":
+                warehouse.location = input("Enter warehouse address: ")
+            elif choice == "3":
+                break
+            else:
+                print("Invalid choice")
+        return warehouse
 
 class TransactionView(BaseView):
-    def __init__(self, service):
-        self.service = service
+
+    def __init__(self, service:WarehouseTransactionService):
+        super().__init__(service)
 
     def get_view_all(self):
-        transaction_loop_menu = True
-        while transaction_loop_menu:
-            print("\nTransactions:\n")
-            print("1. Add")
-            print("2. Delete")
-            print("3. Update")
-            print("4. Get all")
-            print("5. Get transaction by id")
-            print("6. Exit")
-            choice = input("Enter your choice: ")
+
+        options = {
+            "1": "Add transaction",
+            "2": "Delete transaction",
+            "3": "Update transaction",
+            "4": "Get all transaction",
+            "5": "Get by id transaction",
+            "6": "Exit"
+        }
+        while True:
+            choice = self.show_menu("Transaction",options)
             if choice == "1":
-                quantity = int(input("Enter quantity: "))
-                comment = input("Enter comment: ")
-                transaction = WarehouseTransaction(quantity=quantity,
-                                                   transaction_type='purchase',
-                                                   transaction_date=datetime.now(),
-                                                   comment=comment,
-                                                   product_id=random.randint(2, 3),
-                                                   employee_id=random.randint(1, 2),
-                                                   warehouse_id=random.randint(1, 2))
-                print("Transaction adding....")
-                time.sleep(0.3)
-                self.service.create(transaction)
-                print("Transaction add successfully!")
+                self.handler_create(self._create_transaction())
             elif choice == "2":
-                transaction_id = int(input("Enter transaction id: "))
-                print("Deleting transaction...")
-                time.sleep(0.3)
-                self.service.delete(transaction_id)
-                print("Transaction delete successfully!")
+               self.handler_delete()
             elif choice == "3":
-                print("Input transaction id for update...")
-                transaction_id = int(input("Enter transaction id: "))
-                transaction = self.service.get_by_id(transaction_id)
-                updated_transaction = transaction
-                update_loop = True
-                while update_loop:
-                    print("Update transaction...")
-                    print("1. Update quantity")
-                    print("2. Update type")
-                    print("3. Update comment")
-                    print("4. Exit")
-                    choice = input("Enter your choice: ")
-                    if choice == "1":
-                        quantity = int(input("Enter quantity: "))
-                        updated_transaction.quantity = quantity
-                    elif choice == "2":
-                        comment = input("Enter comment: ")
-                        updated_transaction.comment = comment
-                    elif choice == "3":
-                        type = input("Enter type: ")
-                        updated_transaction.type = type
-                    elif choice == "4":
-                        update_loop = False
-                    else:
-                        print("Invalid choice")
-                    self.service.update(transaction_id, updated_transaction)
+                self.handler_update_entity(self._update_transaction)
             elif choice == "4":
-                print("Load list transaction...")
-                for transaction in self.service.get_all():
-                    print(transaction)
-                    time.sleep(0.3)
-                print("list load successfully!")
+                self.handler_get_all()
             elif choice == "5":
-                transaction_id = int(input("Enter transaction id: "))
-                print("Getting transaction data...")
-                time.sleep(0.3)
-                print(self.service.get_by_id(transaction_id))
-                print("Getting transaction data...")
+                self.handler_get_by_id()
             elif choice == "6":
-                transaction_loop_menu = False
+                break
             else:
                 print("Invalid choice")
+
+
+    def _create_transaction(self):
+        quantity = input("Enter quantity: ")
+        transaction_type = input("Enter type transaction: ")
+        comment = input("Enter comment: ")
+        product = input("Enter product: ")
+        employee = input("Enter employee: ")
+        warehouse = input("Enter warehouse: ")
+
+        return WarehouseTransaction(quantity = quantity,
+                                    transaction_type = transaction_type,
+                                    comment=comment,
+                                    product_id = product,
+                                    employee_id = employee,
+                                    warehouse_id = warehouse)
+
+    def _update_transaction(self, transaction):
+        options = {
+            "1": "Update quantity",
+            "2": "Update transaction type",
+            "3": "Update comment to transaction",
+            "4": "Update product number",
+            "5": "Update employee number",
+            "6": "Update warehouse number",
+            "7": "Exit"
+        }
+        while True:
+            choice = self.show_menu("Update transaction menu",options)
+            if choice == "1":
+                transaction.quantity = input("Enter quantity: ")
+            elif choice == "2":
+                transaction.transaction_type = input("Enter transaction type: ")
+            elif choice == "3":
+                transaction.comment = input("Enter comment: ")
+            elif choice == "4":
+                transaction.product_id = input("Enter product number: ")
+            elif choice == "5":
+                transaction.employee_id = input("Enter employee number: ")
+            elif choice == "6":
+                transaction.warehouse_id = input("Enter warehouse number: ")
+            elif choice == "7":
+                break
+            else:
+                print("Invalid choice")
+        return transaction
+

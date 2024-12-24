@@ -1,4 +1,3 @@
-from optparse import Option
 
 from core.base_repository import EmployeeRepository, CategoryRepository, OrderRepository, ProductRepository, \
     SuppliersRepository, WarehouseRepository, WarehouseTransactionRepository
@@ -16,11 +15,11 @@ def handle_choice(choice):
     options = {
         '1': ('Employee', EmployeeRepository, EmployeeService, EmployeeView),
         '2': ('Category', CategoryRepository, CategoryService, CategoryView),
-        '3': ('Order', OrderRepository, OrderView, OrderView),
-        '4': ('Product', ProductRepository, ProductView, ProductView),
+        '3': ('Order', OrderRepository, OrderService, OrderView),
+        '4': ('Product', ProductRepository, ProductService, ProductView),
         '5': ('Supplier', SuppliersRepository, SupplierService, SuppliersView),
-        '6': ('Warehouse', WarehouseRepository, WarehouseView, WarehouseView),
-        '7': ('Transaction', WarehouseTransactionRepository, WarehouseService, TransactionView)
+        '6': ('Warehouse', WarehouseRepository, WarehouseService, WarehouseView),
+        '7': ('Transaction', WarehouseTransactionRepository, WarehouseTransactionService, TransactionView)
     }
     if choice in options:
         entity_name, repository, service, view = options[choice]

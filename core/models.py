@@ -1,8 +1,13 @@
+from datetime import datetime
 
-from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Text
+from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Text, func
 from sqlalchemy.orm import declarative_base, relationship
 
 Base = declarative_base()
+
+def get_timestamp_format(self, timestamp):
+    timestamp_update = datetime.fromisoformat(str(timestamp))
+    return timestamp_update.strftime('%Y-%m-%d %H:%M:%S')
 
 class Employee(Base):
     __tablename__ = 'employee'
@@ -71,7 +76,7 @@ class Product(Base):
     quantity = Column(Integer, nullable=False)
     price = Column(Float, nullable=False)
     description = Column(Text, nullable=False)
-    created_date = Column(DateTime, nullable=False)
+    created_date = Column(DateTime(timezone=True), nullable=False, default=func.now())
     category_id = Column(Integer, ForeignKey('category.id'), nullable=False)
     supplier_id = Column(Integer, ForeignKey('suppliers.id'), nullable=False)
 
@@ -81,13 +86,19 @@ class Product(Base):
     order = relationship('Order',back_populates='product')
 
     def __repr__(self):
+
+        timestamp = datetime.fromisoformat(str(self.created_date))
+        formated_timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
+
         return (f'-------------\n'
                 f'product name: {self.product_name}\n'
                 f'quantity: {self.quantity}\n'
                 f'price: {self.price}\n'
-                f'created_date: {self.created_date}\n'
+                f'created_date: {get_timestamp_format(self.created_date)}\n'
                 f'description: {self.description}\n'
                 f'--------------')
+
+
 
 
 class Warehouse(Base):
@@ -112,7 +123,7 @@ class WarehouseTransaction(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     quantity = Column(Float, nullable=False)
     transaction_type = Column(String(50), nullable=False)
-    transaction_date = Column(DateTime, nullable=False)
+    transaction_date = Column(DateTime(timezone=True), nullable=False, default=func.now())
     comment = Column(Text, nullable=False)
     product_id = Column(Integer, ForeignKey('product.id'), nullable=False)
     employee_id = Column(Integer, ForeignKey('employee.id'), nullable=False)
@@ -127,7 +138,7 @@ class WarehouseTransaction(Base):
                 f'Warehouse_transaction\n '
                 f'quantity: {self.quantity}\n'
                 f'type: {self.transaction_type}\n'
-                f'date: {self.transaction_date}\n'
+                f'date: {get_timestamp_format(self.transaction_date)}\n'
                 f'comment: {self.comment}\n'
                 f'--------------')
 
@@ -137,17 +148,18 @@ class Order(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     quantity = Column(Integer, nullable=False)
-    order_date = Column(DateTime, nullable=False)
+    order_date = Column(DateTime(timezone=True), nullable=False, default=func.now())
     order_state = Column(String(50), nullable=False)
     product_id = Column(Integer, ForeignKey('product.id'), nullable=False)
 
     product = relationship('Product', back_populates='order')
 
+
     def __repr__(self):
         return (f'-----------\n'
                 f'Order\n'
                 f'quantity: {self.quantity}\n'
-                f'date: {self.order_date}\n'
+                f'date: {get_timestamp_format(self.order_date)}\n'
                 f'state: {self.order_state}\n'
                 f'-----------------')
 
